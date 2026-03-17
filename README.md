@@ -2,7 +2,7 @@
 
 Análisis interactivo del funnel de conversión de un canal ecommerce fashion, con segmentación por canal de adquisición y dispositivo.
 
-**Demo en vivo → [ver dashboard](https://castanobelen.github.io/ecommerce-conversion-dashboard)**
+**Demo en vivo → [ver dashboard](https://castanobelen.github.io/ecommerce-conversion-dashboard/)**
 
 ---
 
