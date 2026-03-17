@@ -3,795 +3,339 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Belén Castaño — Ecommerce & Data Analyst</title>
+<title>Dashboard de Conversión Ecommerce — Belén Castaño</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --ink:     #0E0E0E;
-  --warm:    #FAF7F2;
-  --cream:   #F2EDE4;
-  --rose:    #C4717A;
-  --rose-l:  #EDD5D8;
-  --teal:    #2A6B72;
-  --teal-l:  #C8DFE1;
-  --gold:    #B8914A;
-  --gold-l:  #F0E3C8;
-  --muted:   #7A7570;
-  --border:  #E2DAD0;
+  --ink: #0E0E0E; --warm: #FAF7F2; --cream: #F2EDE4;
+  --rose: #C4717A; --rose-l: #EDD5D8;
+  --teal: #2A6B72; --teal-l: #C8DFE1;
+  --muted: #7A7570; --border: #E2DAD0; --white: #FFFFFF;
 }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--warm); color: var(--ink); font-size: 14px; }
 
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--warm);
-  color: var(--ink);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px;
-  line-height: 1.7;
-  overflow-x: hidden;
-}
-
-/* ── CURSOR ── */
-* { cursor: none; }
-.cursor {
-  width: 8px; height: 8px;
-  background: var(--rose);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.15s ease;
-  mix-blend-mode: multiply;
-}
-.cursor-ring {
-  width: 32px; height: 32px;
-  border: 1px solid var(--rose);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  transition: all 0.08s ease;
-  mix-blend-mode: multiply;
-}
-
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1.4rem 4rem;
-  background: rgba(250,247,242,0.88);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.nav-logo {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.nav-links { display: flex; gap: 2.5rem; list-style: none; }
-.nav-links a {
-  font-size: 0.82rem;
-  color: var(--muted);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  transition: color 0.2s;
-  font-weight: 500;
-}
-.nav-links a:hover { color: var(--rose); }
-
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 0 4rem;
-  padding-top: 80px;
-  gap: 4rem;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -20%; right: -10%;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(196,113,122,0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 30%;
-  width: 1px; height: 40%;
-  background: linear-gradient(to bottom, transparent, var(--border), transparent);
-}
-
-.hero-text { position: relative; z-index: 2; }
-
-.hero-eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--rose);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 1.5rem;
-  display: flex; align-items: center; gap: 1rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.2s forwards;
-}
-.hero-eyebrow::before {
-  content: '';
-  width: 40px; height: 1px;
-  background: var(--rose);
-}
-
-.hero-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 6vw, 6rem);
-  font-weight: 300;
-  line-height: 1.0;
-  color: var(--ink);
-  margin-bottom: 0.3rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.4s forwards;
-}
-.hero-name em {
-  font-style: italic;
-  color: var(--rose);
-}
-
-.hero-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  font-weight: 300;
-  color: var(--muted);
-  margin-bottom: 2rem;
-  letter-spacing: 0.02em;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.5s forwards;
-}
-
-.hero-desc {
-  font-size: 0.95rem;
-  color: var(--muted);
-  font-weight: 300;
-  line-height: 1.8;
-  max-width: 460px;
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.6s forwards;
-}
-
-.hero-chips {
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.7s forwards;
-}
-.chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  padding: 0.35rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  color: var(--muted);
-  background: transparent;
-  letter-spacing: 0.04em;
-  transition: all 0.2s;
-}
-.chip:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-l); }
-
-.hero-cta {
-  display: flex; gap: 1rem; align-items: center;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.8s forwards;
-}
-.btn-primary {
-  font-size: 0.82rem;
-  font-weight: 500;
-  padding: 0.75rem 1.8rem;
+/* ── HEADER ── */
+.dash-header {
   background: var(--ink);
-  color: var(--warm);
-  border: none;
-  border-radius: 100px;
-  text-decoration: none;
-  letter-spacing: 0.04em;
+  padding: 1.2rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.dash-brand { display: flex; flex-direction: column; }
+.dash-title { font-size: 1rem; font-weight: 600; color: white; }
+.dash-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; margin-top: 2px; }
+.dash-author {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  color: var(--rose-l); letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.dash-author a { color: var(--rose-l); text-decoration: none; }
+.dash-author a:hover { color: white; }
+
+/* ── FILTERS ── */
+.filters-bar {
+  background: white; border-bottom: 1px solid var(--border);
+  padding: 0.9rem 2rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.filter-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.filters-bar select {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem;
+  padding: 0.45rem 0.9rem; border: 1px solid var(--border);
+  border-radius: 100px; background: var(--warm); color: var(--ink);
+  cursor: pointer; transition: border-color 0.2s;
+}
+.filters-bar select:hover { border-color: var(--rose); }
+.period-tag {
+  margin-left: auto; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em;
+}
+
+/* ── LAYOUT ── */
+.dash-body { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+
+/* ── KPIS ── */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.kpi {
+  background: white; border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.1rem 1.3rem;
   transition: all 0.25s;
 }
-.btn-primary:hover { background: var(--rose); transform: translateY(-2px); }
-.btn-secondary {
-  font-size: 0.82rem;
-  color: var(--muted);
-  text-decoration: none;
-  display: flex; align-items: center; gap: 0.5rem;
-  transition: color 0.2s;
-}
-.btn-secondary:hover { color: var(--rose); }
+.kpi:hover { border-color: var(--rose-l); box-shadow: 0 4px 20px rgba(196,113,122,0.08); }
+.kpi-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; font-weight: 400; }
+.kpi-val { font-size: 1.7rem; font-weight: 600; color: var(--ink); line-height: 1; }
+.kpi-delta { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; margin-top: 5px; }
+.kpi-delta.up { color: #2a7a4b; }
+.kpi-delta.down { color: #b94040; }
 
-/* Hero right — stats card */
-.hero-right {
-  display: flex; flex-direction: column; gap: 1.5rem;
-  opacity: 0;
-  animation: fadeIn 1s 1s forwards;
+/* ── CHARTS ── */
+.charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+.chart-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.3rem 1.5rem;
 }
-.stat-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.5rem 1.8rem;
-  display: flex; align-items: center; gap: 1.5rem;
-  transition: all 0.3s;
-}
-.stat-card:hover { transform: translateX(8px); border-color: var(--rose-l); box-shadow: 0 8px 32px rgba(196,113,122,0.08); }
-.stat-icon {
-  width: 48px; height: 48px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
-  flex-shrink: 0;
-}
-.stat-icon.rose { background: var(--rose-l); }
-.stat-icon.teal { background: var(--teal-l); }
-.stat-icon.gold { background: var(--gold-l); }
-.stat-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1;
-}
-.stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 300; margin-top: 2px; }
+.chart-card-title { font-size: 0.85rem; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.chart-card-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 1.1rem; }
 
-/* ── SECTIONS ── */
-.section { padding: 7rem 4rem; max-width: 1200px; margin: 0 auto; }
+.charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
 
-.section-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--rose);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 0.8rem;
-  display: flex; align-items: center; gap: 0.8rem;
-}
-.section-tag::before { content: ''; width: 24px; height: 1px; background: var(--rose); }
+/* ── FUNNEL ── */
+.funnel-wrap { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.funnel-row { display: flex; align-items: center; gap: 8px; }
+.funnel-label { font-size: 0.72rem; color: var(--muted); width: 100px; flex-shrink: 0; text-align: right; }
+.funnel-bg { flex: 1; height: 26px; background: var(--cream); border-radius: 6px; overflow: hidden; position: relative; }
+.funnel-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; transition: width 0.6s ease; }
+.funnel-bar span { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 500; }
+.funnel-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); width: 44px; flex-shrink: 0; }
 
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.2rem, 4vw, 3.5rem);
-  font-weight: 300;
-  color: var(--ink);
-  line-height: 1.1;
-  margin-bottom: 0.5rem;
-}
-.section-title em { font-style: italic; color: var(--rose); }
+/* ── TABLE ── */
+.table-mini { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.table-mini th { font-size: 0.65rem; font-weight: 500; color: var(--muted); text-align: left; padding: 5px 0; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+.table-mini td { padding: 7px 0; border-bottom: 1px solid var(--border); color: var(--ink); }
+.table-mini tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; font-size: 0.62rem; padding: 2px 7px; border-radius: 100px; font-family: 'JetBrains Mono', monospace; }
+.badge-up { background: #d4edda; color: #1a5c2e; }
+.badge-down { background: #f8d7da; color: #7a1f1f; }
+.badge-neu { background: var(--cream); color: var(--muted); }
 
-.section-sub {
-  font-size: 0.92rem;
-  color: var(--muted);
-  font-weight: 300;
-  max-width: 500px;
-  line-height: 1.8;
-  margin-bottom: 3.5rem;
-}
-
-/* ── STACK ── */
-.stack-section {
-  background: var(--ink);
-  padding: 7rem 4rem;
-}
-.stack-inner { max-width: 1200px; margin: 0 auto; }
-.stack-section .section-tag { color: var(--rose-l); }
-.stack-section .section-tag::before { background: var(--rose-l); }
-.stack-section .section-title { color: white; }
-.stack-section .section-sub { color: rgba(255,255,255,0.45); }
-
-.stack-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-}
-.stack-card {
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 1.2rem 1rem;
-  text-align: center;
-  transition: all 0.3s;
-  background: rgba(255,255,255,0.03);
-}
-.stack-card:hover {
-  background: rgba(196,113,122,0.1);
-  border-color: rgba(196,113,122,0.3);
-  transform: translateY(-3px);
-}
-.stack-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
-.stack-name { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255,255,255,0.7); letter-spacing: 0.03em; }
-.stack-cat { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-top: 3px; }
-
-/* ── EXPERIENCE ── */
-.exp-section { background: white; padding: 7rem 0; }
-.exp-inner { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
-
-.timeline { position: relative; margin-top: 1rem; }
-.timeline::before {
-  content: ''; position: absolute;
-  left: 0; top: 0; bottom: 0; width: 1px;
-  background: linear-gradient(to bottom, var(--rose), var(--border), transparent);
-}
-.tl-item { padding-left: 3rem; margin-bottom: 3.5rem; position: relative; }
-.tl-dot {
-  position: absolute; left: -5px; top: 8px;
-  width: 11px; height: 11px;
-  border-radius: 50%;
-  background: var(--rose);
-  border: 2px solid white;
-  box-shadow: 0 0 0 3px var(--rose-l);
-}
-.tl-period {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--rose);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-.tl-role {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
-  font-weight: 400;
-  color: var(--ink);
-  margin-bottom: 0.2rem;
-}
-.tl-company { font-size: 0.88rem; color: var(--teal); font-weight: 500; margin-bottom: 1rem; }
-.tl-bullets { list-style: none; }
-.tl-bullets li {
-  font-size: 0.88rem; color: var(--muted); font-weight: 300;
-  line-height: 1.7; padding-left: 1.2rem; position: relative; margin-bottom: 0.5rem;
-}
-.tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--rose); font-size: 0.75rem; top: 2px; }
-.tl-metric {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  background: var(--rose-l);
-  color: var(--rose);
-  padding: 0.2rem 0.6rem;
-  border-radius: 100px;
-  margin-left: 0.5rem;
-  letter-spacing: 0.03em;
-  vertical-align: middle;
-}
-
-/* ── PROJECTS ── */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-.project-card {
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  background: white;
-  transition: all 0.35s;
-  display: flex; flex-direction: column;
-}
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 60px rgba(14,14,14,0.08);
-  border-color: var(--rose-l);
-}
-.project-visual {
-  height: 170px; position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-}
-.project-visual svg { width: 100%; height: 100%; position: absolute; }
-.proj-icon { position: relative; z-index: 2; font-size: 2.2rem; }
-.project-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-.project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
-.project-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.63rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 100px;
-  background: var(--cream);
-  color: var(--muted);
-  letter-spacing: 0.03em;
-  border: 1px solid var(--border);
-}
-.project-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem; font-weight: 400;
-  color: var(--ink); margin-bottom: 0.6rem; line-height: 1.2;
-}
-.project-desc { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.7; flex: 1; }
-.project-metrics {
-  display: flex; gap: 1rem; margin-top: 1.2rem;
-  padding-top: 1rem; border-top: 1px solid var(--border);
-}
-.metric { text-align: center; flex: 1; }
-.metric-val {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem; font-weight: 600;
-  color: var(--ink); display: block;
-}
-.metric-label { font-size: 0.65rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; text-transform: uppercase; }
-.project-links { display: flex; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
-.project-link {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
-  padding: 0.4rem 0.9rem; border-radius: 100px;
-  text-decoration: none; letter-spacing: 0.03em; transition: all 0.2s;
-}
-.project-link.primary { background: var(--ink); color: white; }
-.project-link.primary:hover { background: var(--rose); }
-.project-link.secondary { border: 1px solid var(--border); color: var(--muted); }
-.project-link.secondary:hover { border-color: var(--rose); color: var(--rose); }
-
-/* ── CONTACT ── */
-.contact-section {
-  background: var(--ink); padding: 7rem 4rem; text-align: center;
-}
-.contact-section .section-tag { color: var(--rose-l); justify-content: center; }
-.contact-section .section-tag::before { background: var(--rose-l); }
-.contact-section .section-title { color: white; text-align: center; }
-.contact-links { display: flex; justify-content: center; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
-.contact-link {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
-  color: rgba(255,255,255,0.6); text-decoration: none;
-  padding: 0.7rem 1.5rem; border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 100px; transition: all 0.25s; letter-spacing: 0.04em;
-}
-.contact-link:hover { background: rgba(196,113,122,0.15); border-color: var(--rose); color: var(--rose-l); }
+/* ── LEGEND ── */
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; font-size: 0.72rem; color: var(--muted); }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
 /* ── FOOTER ── */
-footer {
-  background: var(--ink); border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 1.5rem 4rem; text-align: center;
-  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
-  color: rgba(255,255,255,0.2); letter-spacing: 0.08em;
+.dash-footer {
+  text-align: center; padding: 1.5rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+  color: var(--muted); border-top: 1px solid var(--border); margin-top: 1rem;
 }
+.dash-footer a { color: var(--rose); text-decoration: none; }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-.reveal { opacity:0; transform:translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.reveal.visible { opacity:1; transform:translateY(0); }
-
-/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  nav, .section, .stack-section, .exp-inner, .contact-section { padding-left: 1.5rem; padding-right: 1.5rem; }
-  .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
-  .hero-right { display: none; }
-  .nav-links { display: none; }
-  .projects-grid { grid-template-columns: 1fr; }
-  footer { padding: 1.5rem; }
+  .charts-row, .charts-row-3 { grid-template-columns: 1fr; }
+  .dash-body { padding: 1rem; }
+  .filters-bar { padding: 0.9rem 1rem; }
+  .dash-header { padding: 1rem; }
 }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- ── NAV ── -->
-<nav>
-  <div class="nav-logo">bc · portfolio</div>
-  <ul class="nav-links">
-    <li><a href="#stack">Stack</a></li>
-    <li><a href="#projects">Proyectos</a></li>
-    <li><a href="#experience">Experiencia</a></li>
-    <li><a href="#contact">Contacto</a></li>
-  </ul>
-</nav>
-
-<!-- ── HERO ── -->
-<section class="hero">
-  <div class="hero-text">
-    <p class="hero-eyebrow">Ecommerce & Data Analyst</p>
-    <h1 class="hero-name">Belén<br><em>Castaño</em></h1>
-    <p class="hero-title">Business Intelligence · Digital Analytics · LATAM Fashion Retail</p>
-    <p class="hero-desc">4 años transformando datos de canales digitales en decisiones de negocio. Especializada en conversión, eventos comerciales y customer journey en retail fashion.</p>
-    <div class="hero-chips">
-      <span class="chip">GA4</span>
-      <span class="chip">Power BI</span>
-      <span class="chip">SQL</span>
-      <span class="chip">Looker</span>
-      <span class="chip">VTEX</span>
-      <span class="chip">Magento</span>
-      <span class="chip">CRO</span>
-      <span class="chip">Forecasting</span>
-    </div>
-    <div class="hero-cta">
-      <a href="#projects" class="btn-primary">Ver proyectos</a>
-      <a href="#contact" class="btn-secondary">Contacto →</a>
-    </div>
+<!-- HEADER -->
+<div class="dash-header">
+  <div class="dash-brand">
+    <div class="dash-title">Dashboard de Conversión Ecommerce</div>
+    <div class="dash-sub">Ecommerce Fashion · Argentina · Ene–Jun 2024</div>
   </div>
-
-  <div class="hero-right">
-    <div class="stat-card">
-      <div class="stat-icon rose">📊</div>
-      <div>
-        <div class="stat-num">800K+</div>
-        <div class="stat-label">sesiones mensuales monitoreadas</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon teal">🛒</div>
-      <div>
-        <div class="stat-num">+200%</div>
-        <div class="stat-label">revenue en eventos comerciales vs. días normales</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon gold">⚡</div>
-      <div>
-        <div class="stat-num">2h → 30min</div>
-        <div class="stat-label">tiempo de reporting semanal automatizado</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon rose">📦</div>
-      <div>
-        <div class="stat-num">6.000+</div>
-        <div class="stat-label">SKUs gestionados en 5 mercados LATAM</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── STACK ── -->
-<div class="stack-section" id="stack">
-  <div class="stack-inner">
-    <div class="reveal">
-      <p class="section-tag">Herramientas</p>
-      <h2 class="section-title" style="color:white">Stack <em style="color:var(--rose-l)">tecnológico</em></h2>
-      <p class="section-sub">Plataformas y herramientas que uso para analizar, visualizar y comunicar datos.</p>
-    </div>
-    <div class="stack-grid reveal">
-      <div class="stack-card"><span class="stack-icon">📉</span><div class="stack-name">GA4</div><div class="stack-cat">Web Analytics</div></div>
-      <div class="stack-card"><span class="stack-icon">📊</span><div class="stack-name">Power BI</div><div class="stack-cat">BI & Dashboards</div></div>
-      <div class="stack-card"><span class="stack-icon">🔍</span><div class="stack-name">Looker Studio</div><div class="stack-cat">BI & Dashboards</div></div>
-      <div class="stack-card"><span class="stack-icon">🗄️</span><div class="stack-name">SQL</div><div class="stack-cat">Data Query</div></div>
-      <div class="stack-card"><span class="stack-icon">📋</span><div class="stack-name">Excel Avanzado</div><div class="stack-cat">Análisis</div></div>
-      <div class="stack-card"><span class="stack-icon">🛒</span><div class="stack-name">VTEX</div><div class="stack-cat">Ecommerce</div></div>
-      <div class="stack-card"><span class="stack-icon">⚙️</span><div class="stack-name">Magento</div><div class="stack-cat">Ecommerce</div></div>
-      <div class="stack-card"><span class="stack-icon">🛍️</span><div class="stack-name">Shopify</div><div class="stack-cat">Ecommerce</div></div>
-      <div class="stack-card"><span class="stack-icon">📣</span><div class="stack-name">Google Ads</div><div class="stack-cat">Performance</div></div>
-      <div class="stack-card"><span class="stack-icon">📱</span><div class="stack-name">Meta Ads</div><div class="stack-cat">Performance</div></div>
-    </div>
+  <div class="dash-author">
+    <span>por</span>
+    <a href="https://castanobelen.github.io/ecommerce-conversion-dashboard" target="_blank">Belén Castaño</a>
+    <span>·</span>
+    <a href="https://github.com/castanobelen" target="_blank">@castanobelen</a>
   </div>
 </div>
 
-<!-- ── PROJECTS ── -->
-<section class="section" id="projects">
-  <div class="reveal">
-    <p class="section-tag">Portfolio</p>
-    <h2 class="section-title">Proyectos de <em>datos</em></h2>
-    <p class="section-sub">Análisis y visualizaciones que muestran cómo trabajo con datos reales de ecommerce fashion.</p>
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="filter-label">Filtrar por</span>
+  <select id="sel-canal" onchange="render()">
+    <option value="all">Todos los canales</option>
+    <option value="organic">Orgánico</option>
+    <option value="paid">Paid Search</option>
+    <option value="social">Social</option>
+    <option value="email">Email</option>
+    <option value="direct">Directo</option>
+  </select>
+  <select id="sel-device" onchange="render()">
+    <option value="all">Todos los dispositivos</option>
+    <option value="mobile">Mobile</option>
+    <option value="desktop">Desktop</option>
+    <option value="tablet">Tablet</option>
+  </select>
+  <span class="period-tag">Período: Ene–Jun 2024 · Datos simulados representativos</span>
+</div>
+
+<div class="dash-body">
+  <!-- KPIS -->
+  <div class="kpis" id="kpis"></div>
+
+  <!-- ROW 1: Sesiones + Funnel -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-card-title">Sesiones y tasa de conversión mensual</div>
+      <div class="chart-card-sub">Volumen de tráfico vs. CVR por mes</div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="cSesiones"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Funnel de conversión</div>
+      <div class="chart-card-sub">Drop-off en cada etapa del journey</div>
+      <div class="funnel-wrap" id="funnel"></div>
+    </div>
   </div>
 
-  <div class="projects-grid">
-
-    <div class="project-card reveal">
-      <div class="project-visual" style="background: linear-gradient(135deg, #0E0E0E 0%, #1a1a2e 100%);">
-        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
-          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4717A" stop-opacity="0.5"/><stop offset="100%" stop-color="#C4717A" stop-opacity="0"/></linearGradient></defs>
-          <polyline points="20,130 70,105 120,85 170,65 220,50 270,42 320,36 380,30" fill="none" stroke="#C4717A" stroke-width="2.5" stroke-linecap="round"/>
-          <polygon points="20,130 70,105 120,85 170,65 220,50 270,42 320,36 380,30 380,160 20,160" fill="url(#g1)"/>
-          <circle cx="220" cy="50" r="4" fill="#C4717A"/><circle cx="380" cy="30" r="4" fill="#EDD5D8"/>
-        </svg>
-        <span class="proj-icon">📊</span>
-      </div>
-      <div class="project-body">
-        <div class="project-tags"><span class="project-tag">Power BI</span><span class="project-tag">SQL</span><span class="project-tag">GA4</span></div>
-        <h3 class="project-name">Dashboard de Conversión Ecommerce</h3>
-        <p class="project-desc">Análisis del funnel completo con segmentación por canal, dispositivo y categoría. Identifica drop-offs y oportunidades de mejora UX.</p>
-        <div class="project-metrics">
-          <div class="metric"><span class="metric-val">5</span><span class="metric-label">KPIs clave</span></div>
-          <div class="metric"><span class="metric-val">5</span><span class="metric-label">Canales</span></div>
-          <div class="metric"><span class="metric-val">Live</span><span class="metric-label">Filtros</span></div>
-        </div>
-        <div class="project-links">
-          <a href="https://castanobelen.github.io/ecommerce-conversion-dashboard" target="_blank" class="project-link primary">Ver demo</a>
-          <a href="https://github.com/castanobelen/ecommerce-conversion-dashboard" target="_blank" class="project-link secondary">GitHub</a>
-        </div>
-      </div>
+  <!-- ROW 2: Canal + Dispositivos + Categorías -->
+  <div class="charts-row-3">
+    <div class="chart-card">
+      <div class="chart-card-title">Revenue por canal</div>
+      <div class="chart-card-sub">Distribución de ingresos</div>
+      <div class="legend" id="leg-canal"></div>
+      <div style="position:relative;width:100%;height:170px;"><canvas id="cCanal"></canvas></div>
     </div>
-
-    <div class="project-card reveal">
-      <div class="project-visual" style="background: linear-gradient(135deg, #0F2A2C 0%, #1A4A4E 100%);">
-        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
-          <rect x="30" y="50" width="40" height="110" rx="4" fill="rgba(42,107,114,0.4)"/>
-          <rect x="90" y="70" width="40" height="90" rx="4" fill="rgba(42,107,114,0.4)"/>
-          <rect x="150" y="35" width="40" height="125" rx="4" fill="#2A6B72" opacity="0.9"/>
-          <rect x="210" y="80" width="40" height="80" rx="4" fill="rgba(42,107,114,0.4)"/>
-          <rect x="270" y="45" width="40" height="115" rx="4" fill="rgba(196,113,122,0.7)"/>
-          <rect x="330" y="65" width="40" height="95" rx="4" fill="rgba(42,107,114,0.4)"/>
-        </svg>
-        <span class="proj-icon">🔮</span>
-      </div>
-      <div class="project-body">
-        <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">SQL</span><span class="project-tag">Forecasting</span></div>
-        <h3 class="project-name">Forecasting de Demanda Fashion</h3>
-        <p class="project-desc">Modelo de predicción semanal por categoría incorporando estacionalidad del sector moda y calendario comercial argentino.</p>
-        <div class="project-metrics">
-          <div class="metric"><span class="metric-val">12</span><span class="metric-label">Categorías</span></div>
-          <div class="metric"><span class="metric-val">±8%</span><span class="metric-label">Error prom.</span></div>
-          <div class="metric"><span class="metric-val">Semanal</span><span class="metric-label">Horizonte</span></div>
-        </div>
-        <div class="project-links">
-          <a href="https://github.com/castanobelen/fashion-demand-forecasting" target="_blank" class="project-link primary">GitHub</a>
-        </div>
-      </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Conversión por dispositivo</div>
+      <div class="chart-card-sub">CVR y ticket promedio</div>
+      <table class="table-mini">
+        <thead><tr><th>Dispositivo</th><th>CVR</th><th>Ticket</th><th>Δ</th></tr></thead>
+        <tbody id="tbl-device"></tbody>
+      </table>
     </div>
-
-    <div class="project-card reveal">
-      <div class="project-visual" style="background: linear-gradient(135deg, #1A0F0F 0%, #2D1515 100%);">
-        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="90" cy="85" r="60" fill="none" stroke="#C4717A" stroke-width="1.5" opacity="0.4"/>
-          <circle cx="90" cy="85" r="42" fill="rgba(196,113,122,0.12)" stroke="#C4717A" stroke-width="1.5"/>
-          <circle cx="90" cy="85" r="22" fill="rgba(196,113,122,0.25)"/>
-          <text x="72" y="90" font-size="10" fill="#C4717A" font-family="monospace">A 20%</text>
-          <rect x="185" y="25" width="185" height="22" rx="4" fill="rgba(196,113,122,0.5)"/>
-          <rect x="185" y="55" width="135" height="22" rx="4" fill="rgba(42,107,114,0.5)"/>
-          <rect x="185" y="85" width="95" height="22" rx="4" fill="rgba(42,107,114,0.3)"/>
-          <rect x="185" y="115" width="60" height="22" rx="4" fill="rgba(42,107,114,0.15)"/>
-          <text x="192" y="40" font-size="9" fill="white" font-family="monospace">Clase A</text>
-          <text x="192" y="70" font-size="9" fill="white" font-family="monospace">Clase B</text>
-          <text x="192" y="100" font-size="9" fill="white" font-family="monospace">Clase C</text>
-          <text x="192" y="130" font-size="9" fill="white" font-family="monospace">Clase D</text>
-        </svg>
-        <span class="proj-icon">📦</span>
-      </div>
-      <div class="project-body">
-        <div class="project-tags"><span class="project-tag">SQL</span><span class="project-tag">Excel</span><span class="project-tag">Looker</span></div>
-        <h3 class="project-name">Performance de Catálogo ABC/XYZ</h3>
-        <p class="project-desc">Clasificación de SKUs por rotación y variabilidad de demanda. Detección de canibalización, quiebres de stock y oportunidades de mix.</p>
-        <div class="project-metrics">
-          <div class="metric"><span class="metric-val">3K+</span><span class="metric-label">SKUs</span></div>
-          <div class="metric"><span class="metric-val">4</span><span class="metric-label">Segmentos</span></div>
-          <div class="metric"><span class="metric-val">Real</span><span class="metric-label">Caso</span></div>
-        </div>
-        <div class="project-links">
-          <a href="https://github.com/castanobelen/catalogo-abc-xyz" target="_blank" class="project-link primary">GitHub</a>
-        </div>
-      </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Top categorías</div>
+      <div class="chart-card-sub">Revenue, unidades y CVR</div>
+      <table class="table-mini">
+        <thead><tr><th>Categoría</th><th>Revenue</th><th>CVR</th></tr></thead>
+        <tbody id="tbl-cat"></tbody>
+      </table>
     </div>
-
-    <div class="project-card reveal">
-      <div class="project-visual" style="background: linear-gradient(135deg, #0A0F1A 0%, #0F1A2E 100%);">
-        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
-          <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C4717A" stop-opacity="0.9"/><stop offset="100%" stop-color="#2A6B72" stop-opacity="0.9"/></linearGradient></defs>
-          <rect x="30" y="60" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
-          <rect x="30" y="60" width="215" height="10" rx="5" fill="url(#g2)"/>
-          <rect x="30" y="82" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
-          <rect x="30" y="82" width="155" height="10" rx="5" fill="rgba(42,107,114,0.7)"/>
-          <rect x="30" y="104" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
-          <rect x="30" y="104" width="285" height="10" rx="5" fill="rgba(42,107,114,0.45)"/>
-          <text x="30" y="52" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Organic</text>
-          <text x="30" y="74" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Paid Social</text>
-          <text x="30" y="96" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Email</text>
-          <text x="252" y="69" font-size="9" fill="white" font-family="monospace">63%</text>
-          <text x="192" y="91" font-size="9" fill="white" font-family="monospace">45%</text>
-          <text x="322" y="113" font-size="9" fill="white" font-family="monospace">84%</text>
-        </svg>
-        <span class="proj-icon">📡</span>
-      </div>
-      <div class="project-body">
-        <div class="project-tags"><span class="project-tag">GA4</span><span class="project-tag">Looker</span><span class="project-tag">SQL</span></div>
-        <h3 class="project-name">Análisis de Atribución Multicanal</h3>
-        <p class="project-desc">Comparación de modelos de atribución (last click vs data-driven) para entender la contribución real de cada canal al revenue.</p>
-        <div class="project-metrics">
-          <div class="metric"><span class="metric-val">5</span><span class="metric-label">Canales</span></div>
-          <div class="metric"><span class="metric-val">3</span><span class="metric-label">Modelos</span></div>
-          <div class="metric"><span class="metric-val">Semanal</span><span class="metric-label">Granularidad</span></div>
-        </div>
-        <div class="project-links">
-          <a href="https://github.com/castanobelen/atribucion-multicanal" target="_blank" class="project-link primary">GitHub</a>
-        </div>
-      </div>
-    </div>
-
   </div>
-</section>
 
-<!-- ── EXPERIENCE ── -->
-<div class="exp-section" id="experience">
-  <div class="exp-inner">
-    <div class="reveal">
-      <p class="section-tag">Trayectoria</p>
-      <h2 class="section-title">Experiencia <em>profesional</em></h2>
-    </div>
-    <div class="timeline reveal" style="margin-top: 2.5rem;">
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <p class="tl-period">Feb. 2023 — Presente</p>
-        <h3 class="tl-role">Analista Ecommerce & Comercial</h3>
-        <p class="tl-company">Isadora Argentina — Blue Star Group</p>
-        <ul class="tl-bullets">
-          <li>Monitoreo y análisis del canal digital con <span class="tl-metric">+800K sesiones/mes</span> — elaboración de reportes ejecutivos semanales reducidos de 2h a 30min mediante automatización.</li>
-          <li>Planificación y ejecución de 3 eventos digitales anuales (Hot Sale, Cyber Monday, Glam Days) con resultados de <span class="tl-metric">+200% revenue</span> y CVR duplicado (0,9% → 1,8%).</li>
-          <li>Gestión del customer journey en catálogo de <span class="tl-metric">+3.000 SKUs</span> activos: publicación de productos, activación de promociones y seguimiento del funnel en GA4.</li>
-          <li>Planificación de newsletters y coordinación con CRM para segmentación de audiencias, con foco en retención y CLV.</li>
-          <li>Implementación de estrategias SEO on-page en Magento y optimización de fichas de producto para mejorar conversión orgánica.</li>
-          <li>Seguimiento de métricas clave: CAC, ROAS, CVR, AOV, revenue y margen, con generación de insights para decisiones comerciales.</li>
-        </ul>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <p class="tl-period">Jun. 2021 — Ene. 2023</p>
-        <h3 class="tl-role">Coordinadora de Catálogo Ecommerce</h3>
-        <p class="tl-company">Isadora & Todomoda — Blue Star Group</p>
-        <ul class="tl-bullets">
-          <li>Lideré la estrategia de catálogo digital para 5 mercados de LATAM (AR, CL, MX, PE, BR), gestionando <span class="tl-metric">+6.000 SKUs</span> entre ambas marcas.</li>
-          <li>Gestioné y optimicé fichas de producto en Magento: títulos, meta descriptions, estructura de contenido y enlazado interno, con impacto directo en posicionamiento orgánico.</li>
-          <li>Implementé carga masiva de productos mediante APIs, reduciendo el tiempo de catalogación de días a horas y eliminando errores manuales.</li>
-          <li>Analicé visibilidad orgánica y performance de categorías por mercado, generando reportes para apoyar decisiones de catálogo.</li>
-          <li>Coordiné con equipos técnicos y de performance marketing para alinear el catálogo con campañas pagas y lanzamientos de temporada.</li>
-        </ul>
-      </div>
-
-    </div>
+  <!-- ROW 3: Drop-off por canal -->
+  <div class="chart-card">
+    <div class="chart-card-title">Drop-off por etapa según canal</div>
+    <div class="chart-card-sub">% usuarios que abandonan en cada paso del funnel</div>
+    <div style="position:relative;width:100%;height:240px;margin-top:0.5rem;"><canvas id="cDropoff"></canvas></div>
   </div>
 </div>
 
-<!-- ── CONTACT ── -->
-<div class="contact-section" id="contact">
-  <p class="section-tag" style="justify-content:center">Contacto</p>
-  <h2 class="section-title" style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2.2rem,4vw,3.5rem);color:white;text-align:center;margin-bottom:0.5rem;">Hablemos <em style="color:var(--rose-l);font-style:italic">pronto</em></h2>
-  <p style="color:rgba(255,255,255,0.4);font-size:0.88rem;font-weight:300;margin-top:0.5rem;">Abierta a oportunidades en Data Analytics & Business Intelligence</p>
-  <div class="contact-links">
-    <a href="mailto:castanobelen@gmail.com" class="contact-link">✉ castanobelen@gmail.com</a>
-    <a href="https://linkedin.com/in/belencastaño" target="_blank" class="contact-link">💼 LinkedIn</a>
-    <a href="https://github.com/castanobelen" target="_blank" class="contact-link">🐙 GitHub</a>
-  </div>
+<div class="dash-footer">
+  Proyecto de portfolio · <a href="https://castanobelen.github.io/ecommerce-conversion-dashboard">castanobelen.github.io</a> · Datos simulados basados en comportamiento real de ecommerce fashion argentino
 </div>
-
-<footer>© 2026 Belén Castaño · Buenos Aires, Argentina</footer>
 
 <script>
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
+const DATA = {
+  all: {
+    kpis: { sesiones: 284600, cvr: 2.8, ticket: 18400, revenue: 14680000, carrito: 68.4 },
+    monthly: { labels:['Ene','Feb','Mar','Abr','May','Jun'], sesiones:[41200,38900,45600,50100,55800,52900], cvr:[2.4,2.5,2.7,2.9,3.1,3.0] },
+    funnel: [{label:'Sesiones',val:284600,pct:100},{label:'Vista producto',val:191200,pct:67.2},{label:'Add to cart',val:89400,pct:31.4},{label:'Checkout',val:28400,pct:9.98},{label:'Compra',val:7969,pct:2.80}],
+    canal: { labels:['Orgánico','Paid Search','Social','Email','Directo'], data:[38,27,18,10,7], colors:['#C4717A','#2A6B72','#B8914A','#7A5C8C','#7A7570'] },
+    devices: [{d:'Mobile',cvr:'2.1%',ticket:'$16.8K',delta:'up'},{d:'Desktop',cvr:'4.2%',ticket:'$21.3K',delta:'up'},{d:'Tablet',cvr:'3.0%',ticket:'$19.1K',delta:'neu'}],
+    cats: [{c:'Vestidos',rev:'$4.2M',cvr:'3.4%'},{c:'Jeans',rev:'$3.1M',cvr:'3.1%'},{c:'Accesorios',rev:'$2.4M',cvr:'2.2%'},{c:'Calzado',rev:'$2.1M',cvr:'2.8%'},{c:'Tops',rev:'$1.8M',cvr:'2.0%'}],
+    dropoff: { labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'], datasets:[{label:'Orgánico',data:[34,62,70],color:'#C4717A'},{label:'Paid Search',data:[36,65,72],color:'#2A6B72'},{label:'Social',data:[42,70,78],color:'#B8914A'},{label:'Email',data:[28,55,65],color:'#7A5C8C'}] }
+  },
+  organic: {
+    kpis:{sesiones:108200,cvr:3.2,ticket:19100,revenue:6622000,carrito:63.2},
+    monthly:{labels:['Ene','Feb','Mar','Abr','May','Jun'],sesiones:[15800,14900,17200,19400,21800,19100],cvr:[2.8,2.9,3.1,3.3,3.5,3.4]},
+    funnel:[{label:'Sesiones',val:108200,pct:100},{label:'Vista producto',val:77900,pct:72.0},{label:'Add to cart',val:35100,pct:32.4},{label:'Checkout',val:11200,pct:10.3},{label:'Compra',val:3462,pct:3.2}],
+    canal:{labels:['Orgánico'],data:[100],colors:['#C4717A']},
+    devices:[{d:'Mobile',cvr:'2.5%',ticket:'$17.4K',delta:'up'},{d:'Desktop',cvr:'4.8%',ticket:'$22.1K',delta:'up'},{d:'Tablet',cvr:'3.3%',ticket:'$19.8K',delta:'up'}],
+    cats:[{c:'Vestidos',rev:'$1.8M',cvr:'4.0%'},{c:'Jeans',rev:'$1.3M',cvr:'3.6%'},{c:'Calzado',rev:'$0.9M',cvr:'3.2%'},{c:'Accesorios',rev:'$0.8M',cvr:'2.5%'},{c:'Tops',rev:'$0.7M',cvr:'2.3%'}],
+    dropoff:{labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'],datasets:[{label:'Orgánico',data:[34,62,70],color:'#C4717A'}]}
+  },
+  paid: {
+    kpis:{sesiones:76800,cvr:3.8,ticket:20200,revenue:5901000,carrito:61.0},
+    monthly:{labels:['Ene','Feb','Mar','Abr','May','Jun'],sesiones:[10200,11400,12800,13600,15200,13600],cvr:[3.2,3.4,3.7,3.9,4.2,4.0]},
+    funnel:[{label:'Sesiones',val:76800,pct:100},{label:'Vista producto',val:54300,pct:70.7},{label:'Add to cart',val:25700,pct:33.5},{label:'Checkout',val:8300,pct:10.8},{label:'Compra',val:2918,pct:3.8}],
+    canal:{labels:['Paid Search'],data:[100],colors:['#2A6B72']},
+    devices:[{d:'Mobile',cvr:'3.0%',ticket:'$18.6K',delta:'up'},{d:'Desktop',cvr:'5.1%',ticket:'$23.4K',delta:'up'},{d:'Tablet',cvr:'3.6%',ticket:'$20.1K',delta:'neu'}],
+    cats:[{c:'Vestidos',rev:'$1.6M',cvr:'4.5%'},{c:'Jeans',rev:'$1.2M',cvr:'4.1%'},{c:'Accesorios',rev:'$0.7M',cvr:'2.9%'},{c:'Calzado',rev:'$0.6M',cvr:'3.8%'},{c:'Tops',rev:'$0.5M',cvr:'2.7%'}],
+    dropoff:{labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'],datasets:[{label:'Paid Search',data:[36,65,72],color:'#2A6B72'}]}
+  },
+  social: {
+    kpis:{sesiones:51200,cvr:1.9,ticket:15800,revenue:1537000,carrito:74.2},
+    monthly:{labels:['Ene','Feb','Mar','Abr','May','Jun'],sesiones:[7200,7800,8400,9100,10200,8500],cvr:[1.6,1.7,1.8,1.9,2.1,2.0]},
+    funnel:[{label:'Sesiones',val:51200,pct:100},{label:'Vista producto',val:32200,pct:62.9},{label:'Add to cart',val:14100,pct:27.5},{label:'Checkout',val:4200,pct:8.2},{label:'Compra',val:973,pct:1.9}],
+    canal:{labels:['Social'],data:[100],colors:['#B8914A']},
+    devices:[{d:'Mobile',cvr:'1.8%',ticket:'$14.9K',delta:'up'},{d:'Desktop',cvr:'2.4%',ticket:'$17.8K',delta:'neu'},{d:'Tablet',cvr:'2.0%',ticket:'$15.3K',delta:'down'}],
+    cats:[{c:'Accesorios',rev:'$0.5M',cvr:'1.6%'},{c:'Vestidos',rev:'$0.4M',cvr:'2.2%'},{c:'Tops',rev:'$0.3M',cvr:'1.4%'},{c:'Jeans',rev:'$0.2M',cvr:'1.7%'},{c:'Calzado',rev:'$0.1M',cvr:'1.2%'}],
+    dropoff:{labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'],datasets:[{label:'Social',data:[42,70,78],color:'#B8914A'}]}
+  },
+  email: {
+    kpis:{sesiones:28400,cvr:5.1,ticket:22600,revenue:3272000,carrito:52.0},
+    monthly:{labels:['Ene','Feb','Mar','Abr','May','Jun'],sesiones:[4100,4400,4800,5200,5600,4300],cvr:[4.5,4.7,5.0,5.2,5.5,5.3]},
+    funnel:[{label:'Sesiones',val:28400,pct:100},{label:'Vista producto',val:22100,pct:77.8},{label:'Add to cart',val:12800,pct:45.1},{label:'Checkout',val:4100,pct:14.4},{label:'Compra',val:1448,pct:5.1}],
+    canal:{labels:['Email'],data:[100],colors:['#7A5C8C']},
+    devices:[{d:'Mobile',cvr:'4.2%',ticket:'$20.1K',delta:'up'},{d:'Desktop',cvr:'6.3%',ticket:'$25.8K',delta:'up'},{d:'Tablet',cvr:'4.8%',ticket:'$22.3K',delta:'up'}],
+    cats:[{c:'Vestidos',rev:'$1.0M',cvr:'6.1%'},{c:'Jeans',rev:'$0.8M',cvr:'5.8%'},{c:'Calzado',rev:'$0.6M',cvr:'5.2%'},{c:'Accesorios',rev:'$0.5M',cvr:'4.0%'},{c:'Tops',rev:'$0.3M',cvr:'3.8%'}],
+    dropoff:{labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'],datasets:[{label:'Email',data:[28,55,65],color:'#7A5C8C'}]}
+  },
+  direct: {
+    kpis:{sesiones:20000,cvr:3.6,ticket:20400,revenue:1469000,carrito:58.0},
+    monthly:{labels:['Ene','Feb','Mar','Abr','May','Jun'],sesiones:[2900,3100,3400,3800,4000,2800],cvr:[3.2,3.3,3.5,3.7,3.9,3.8]},
+    funnel:[{label:'Sesiones',val:20000,pct:100},{label:'Vista producto',val:14800,pct:74.0},{label:'Add to cart',val:7100,pct:35.5},{label:'Checkout',val:2300,pct:11.5},{label:'Compra',val:720,pct:3.6}],
+    canal:{labels:['Directo'],data:[100],colors:['#7A7570']},
+    devices:[{d:'Mobile',cvr:'2.9%',ticket:'$18.9K',delta:'neu'},{d:'Desktop',cvr:'4.5%',ticket:'$23.1K',delta:'up'},{d:'Tablet',cvr:'3.2%',ticket:'$19.9K',delta:'neu'}],
+    cats:[{c:'Jeans',rev:'$0.4M',cvr:'4.2%'},{c:'Vestidos',rev:'$0.4M',cvr:'3.9%'},{c:'Calzado',rev:'$0.3M',cvr:'3.5%'},{c:'Accesorios',rev:'$0.2M',cvr:'2.8%'},{c:'Tops',rev:'$0.2M',cvr:'2.5%'}],
+    dropoff:{labels:['PDP→Cart','Cart→Checkout','Checkout→Compra'],datasets:[{label:'Directo',data:[31,59,68],color:'#7A7570'}]}
+  }
+};
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx - 4 + 'px';
-  cursor.style.top = my - 4 + 'px';
-});
+let cS=null, cC=null, cD=null;
 
-function animateRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx - 16 + 'px';
-  ring.style.top = ry - 16 + 'px';
-  requestAnimationFrame(animateRing);
-}
-animateRing();
+function fmt(n){ return n>=1000000?'$'+Math.round(n/100000)/10+'M':n>=1000?(n/1000).toFixed(0)+'K':n; }
 
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
-      observer.unobserve(e.target);
-    }
+function render(){
+  const canal = document.getElementById('sel-canal').value;
+  const d = DATA[canal] || DATA.all;
+
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Sesiones</div><div class="kpi-val">${(d.kpis.sesiones/1000).toFixed(0)}K</div><div class="kpi-delta up">↑ +8.4% vs ant.</div></div>
+    <div class="kpi"><div class="kpi-label">Tasa de conversión</div><div class="kpi-val">${d.kpis.cvr}%</div><div class="kpi-delta up">↑ +0.3pp</div></div>
+    <div class="kpi"><div class="kpi-label">Ticket promedio</div><div class="kpi-val">$${(d.kpis.ticket/1000).toFixed(1)}K</div><div class="kpi-delta up">↑ +5.2%</div></div>
+    <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(d.kpis.revenue)}</div><div class="kpi-delta up">↑ +11.8%</div></div>
+    <div class="kpi"><div class="kpi-label">Abandono carrito</div><div class="kpi-val">${d.kpis.carrito}%</div><div class="kpi-delta ${canal==='social'?'down':'up'}">${canal==='social'?'↑ +2.1%':'↓ -1.4%'}</div></div>
+  `;
+
+  if(cS) cS.destroy();
+  cS = new Chart(document.getElementById('cSesiones'),{
+    data:{labels:d.monthly.labels,datasets:[
+      {type:'bar',label:'Sesiones',data:d.monthly.sesiones,backgroundColor:'rgba(196,113,122,0.15)',borderColor:'#C4717A',borderWidth:1.5,yAxisID:'y',order:2},
+      {type:'line',label:'CVR %',data:d.monthly.cvr,borderColor:'#2A6B72',backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:'#2A6B72',yAxisID:'y2',order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      y:{position:'left',grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}},
+      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:10},callback:v=>v+'%'},min:0,max:Math.max(...d.monthly.cvr)+2}
+    }}
   });
-}, { threshold: 0.08 });
-reveals.forEach(r => observer.observe(r));
+
+  const fc = ['#C4717A','#D4919A','#E4B1B8','#EDD5D8','#2A6B72'];
+  document.getElementById('funnel').innerHTML = d.funnel.map((f,i)=>`
+    <div class="funnel-row">
+      <div class="funnel-label">${f.label}</div>
+      <div class="funnel-bg"><div class="funnel-bar" style="width:${f.pct}%;background:${fc[i]};"><span style="color:${i<3?'#fff':'#2A6B72'};font-size:0.62rem;">${f.val>=1000?(f.val/1000).toFixed(1)+'K':f.val}</span></div></div>
+      <div class="funnel-pct">${f.pct.toFixed(1)}%</div>
+    </div>`).join('');
+
+  document.getElementById('leg-canal').innerHTML = d.canal.labels.map((l,i)=>`
+    <span><span class="leg-dot" style="background:${d.canal.colors[i]};border-radius:50%"></span>${l} ${d.canal.data[i]}%</span>`).join('');
+
+  if(cC) cC.destroy();
+  cC = new Chart(document.getElementById('cCanal'),{
+    type:'doughnut',
+    data:{labels:d.canal.labels,datasets:[{data:d.canal.data,backgroundColor:d.canal.colors,borderWidth:3,borderColor:'#FAF7F2'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}%`}}}}
+  });
+
+  document.getElementById('tbl-device').innerHTML = d.devices.map(r=>`
+    <tr><td>${r.d}</td><td>${r.cvr}</td><td>${r.ticket}</td><td><span class="badge badge-${r.delta}">${r.delta==='up'?'↑':r.delta==='down'?'↓':'→'}</span></td></tr>`).join('');
+
+  document.getElementById('tbl-cat').innerHTML = d.cats.map(c=>`
+    <tr><td>${c.c}</td><td>${c.rev}</td><td>${c.cvr}</td></tr>`).join('');
+
+  if(cD) cD.destroy();
+  cD = new Chart(document.getElementById('cDropoff'),{
+    type:'bar',
+    data:{labels:d.dropoff.labels,datasets:d.dropoff.datasets.map(ds=>({label:ds.label,data:ds.data,backgroundColor:ds.color+'33',borderColor:ds.color,borderWidth:1.5,borderRadius:6}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{font:{size:11},boxWidth:10,boxHeight:10,padding:14}}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{max:100,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v+'%'}}
+    }}
+  });
+}
+
+render();
 </script>
 </body>
 </html>
