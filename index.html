@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Belén Castaño — Ecommerce & Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #0E0E0E;
+  --warm:    #FAF7F2;
+  --cream:   #F2EDE4;
+  --rose:    #C4717A;
+  --rose-l:  #EDD5D8;
+  --teal:    #2A6B72;
+  --teal-l:  #C8DFE1;
+  --gold:    #B8914A;
+  --gold-l:  #F0E3C8;
+  --muted:   #7A7570;
+  --border:  #E2DAD0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--warm);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── CURSOR ── */
+* { cursor: none; }
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--rose);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+  mix-blend-mode: multiply;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid var(--rose);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.08s ease;
+  mix-blend-mode: multiply;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.4rem 4rem;
+  background: rgba(250,247,242,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+.nav-links a:hover { color: var(--rose); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0 4rem;
+  padding-top: 80px;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(196,113,122,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 30%;
+  width: 1px; height: 40%;
+  background: linear-gradient(to bottom, transparent, var(--border), transparent);
+}
+
+.hero-text { position: relative; z-index: 2; }
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--rose);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--rose);
+}
+
+.hero-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 1.0;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.4s forwards;
+}
+.hero-name em {
+  font-style: italic;
+  color: var(--rose);
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s forwards;
+}
+
+.hero-desc {
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s forwards;
+}
+
+.hero-chips {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.7s forwards;
+}
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--muted);
+  background: transparent;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+.chip:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-l); }
+
+.hero-cta {
+  display: flex; gap: 1rem; align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+.btn-primary {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.75rem 1.8rem;
+  background: var(--ink);
+  color: var(--warm);
+  border: none;
+  border-radius: 100px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: all 0.25s;
+}
+.btn-primary:hover { background: var(--rose); transform: translateY(-2px); }
+.btn-secondary {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: color 0.2s;
+}
+.btn-secondary:hover { color: var(--rose); }
+
+/* Hero right — stats card */
+.hero-right {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 1s 1s forwards;
+}
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem 1.8rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  transition: all 0.3s;
+}
+.stat-card:hover { transform: translateX(8px); border-color: var(--rose-l); box-shadow: 0 8px 32px rgba(196,113,122,0.08); }
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.stat-icon.rose { background: var(--rose-l); }
+.stat-icon.teal { background: var(--teal-l); }
+.stat-icon.gold { background: var(--gold-l); }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 300; margin-top: 2px; }
+
+/* ── SECTIONS ── */
+.section { padding: 7rem 4rem; max-width: 1200px; margin: 0 auto; }
+
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--rose);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.section-tag::before { content: ''; width: 24px; height: 1px; background: var(--rose); }
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+.section-title em { font-style: italic; color: var(--rose); }
+
+.section-sub {
+  font-size: 0.92rem;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 500px;
+  line-height: 1.8;
+  margin-bottom: 3.5rem;
+}
+
+/* ── STACK ── */
+.stack-section {
+  background: var(--ink);
+  padding: 7rem 4rem;
+}
+.stack-inner { max-width: 1200px; margin: 0 auto; }
+.stack-section .section-tag { color: var(--rose-l); }
+.stack-section .section-tag::before { background: var(--rose-l); }
+.stack-section .section-title { color: white; }
+.stack-section .section-sub { color: rgba(255,255,255,0.45); }
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.stack-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+  transition: all 0.3s;
+  background: rgba(255,255,255,0.03);
+}
+.stack-card:hover {
+  background: rgba(196,113,122,0.1);
+  border-color: rgba(196,113,122,0.3);
+  transform: translateY(-3px);
+}
+.stack-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+.stack-name { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255,255,255,0.7); letter-spacing: 0.03em; }
+.stack-cat { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-top: 3px; }
+
+/* ── EXPERIENCE ── */
+.exp-section { background: white; padding: 7rem 0; }
+.exp-inner { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
+
+.timeline { position: relative; margin-top: 1rem; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, var(--rose), var(--border), transparent);
+}
+.tl-item { padding-left: 3rem; margin-bottom: 3.5rem; position: relative; }
+.tl-dot {
+  position: absolute; left: -5px; top: 8px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--rose);
+  border: 2px solid white;
+  box-shadow: 0 0 0 3px var(--rose-l);
+}
+.tl-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--rose);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.tl-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.tl-company { font-size: 0.88rem; color: var(--teal); font-weight: 500; margin-bottom: 1rem; }
+.tl-bullets { list-style: none; }
+.tl-bullets li {
+  font-size: 0.88rem; color: var(--muted); font-weight: 300;
+  line-height: 1.7; padding-left: 1.2rem; position: relative; margin-bottom: 0.5rem;
+}
+.tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--rose); font-size: 0.75rem; top: 2px; }
+.tl-metric {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  background: var(--rose-l);
+  color: var(--rose);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  margin-left: 0.5rem;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+}
+
+/* ── PROJECTS ── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.project-card {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+  transition: all 0.35s;
+  display: flex; flex-direction: column;
+}
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px rgba(14,14,14,0.08);
+  border-color: var(--rose-l);
+}
+.project-visual {
+  height: 170px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-visual svg { width: 100%; height: 100%; position: absolute; }
+.proj-icon { position: relative; z-index: 2; font-size: 2.2rem; }
+.project-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+.project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.project-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.63rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: var(--cream);
+  color: var(--muted);
+  letter-spacing: 0.03em;
+  border: 1px solid var(--border);
+}
+.project-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 400;
+  color: var(--ink); margin-bottom: 0.6rem; line-height: 1.2;
+}
+.project-desc { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.7; flex: 1; }
+.project-metrics {
+  display: flex; gap: 1rem; margin-top: 1.2rem;
+  padding-top: 1rem; border-top: 1px solid var(--border);
+}
+.metric { text-align: center; flex: 1; }
+.metric-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 600;
+  color: var(--ink); display: block;
+}
+.metric-label { font-size: 0.65rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; text-transform: uppercase; }
+.project-links { display: flex; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
+.project-link {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  padding: 0.4rem 0.9rem; border-radius: 100px;
+  text-decoration: none; letter-spacing: 0.03em; transition: all 0.2s;
+}
+.project-link.primary { background: var(--ink); color: white; }
+.project-link.primary:hover { background: var(--rose); }
+.project-link.secondary { border: 1px solid var(--border); color: var(--muted); }
+.project-link.secondary:hover { border-color: var(--rose); color: var(--rose); }
+
+/* ── CONTACT ── */
+.contact-section {
+  background: var(--ink); padding: 7rem 4rem; text-align: center;
+}
+.contact-section .section-tag { color: var(--rose-l); justify-content: center; }
+.contact-section .section-tag::before { background: var(--rose-l); }
+.contact-section .section-title { color: white; text-align: center; }
+.contact-links { display: flex; justify-content: center; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+.contact-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+  color: rgba(255,255,255,0.6); text-decoration: none;
+  padding: 0.7rem 1.5rem; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px; transition: all 0.25s; letter-spacing: 0.04em;
+}
+.contact-link:hover { background: rgba(196,113,122,0.15); border-color: var(--rose); color: var(--rose-l); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink); border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 1.5rem 4rem; text-align: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  color: rgba(255,255,255,0.2); letter-spacing: 0.08em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.reveal { opacity:0; transform:translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav, .section, .stack-section, .exp-inner, .contact-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
+  .hero-right { display: none; }
+  .nav-links { display: none; }
+  .projects-grid { grid-template-columns: 1fr; }
+  footer { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">bc · portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#projects">Proyectos</a></li>
+    <li><a href="#experience">Experiencia</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Ecommerce & Data Analyst</p>
+    <h1 class="hero-name">Belén<br><em>Castaño</em></h1>
+    <p class="hero-title">Business Intelligence · Digital Analytics · LATAM Fashion Retail</p>
+    <p class="hero-desc">4 años transformando datos de canales digitales en decisiones de negocio. Especializada en conversión, eventos comerciales y customer journey en retail fashion.</p>
+    <div class="hero-chips">
+      <span class="chip">GA4</span>
+      <span class="chip">Power BI</span>
+      <span class="chip">SQL</span>
+      <span class="chip">Looker</span>
+      <span class="chip">VTEX</span>
+      <span class="chip">Magento</span>
+      <span class="chip">CRO</span>
+      <span class="chip">Forecasting</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">Ver proyectos</a>
+      <a href="#contact" class="btn-secondary">Contacto →</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="stat-card">
+      <div class="stat-icon rose">📊</div>
+      <div>
+        <div class="stat-num">800K+</div>
+        <div class="stat-label">sesiones mensuales monitoreadas</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon teal">🛒</div>
+      <div>
+        <div class="stat-num">+200%</div>
+        <div class="stat-label">revenue en eventos comerciales vs. días normales</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold">⚡</div>
+      <div>
+        <div class="stat-num">2h → 30min</div>
+        <div class="stat-label">tiempo de reporting semanal automatizado</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon rose">📦</div>
+      <div>
+        <div class="stat-num">6.000+</div>
+        <div class="stat-label">SKUs gestionados en 5 mercados LATAM</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STACK ── -->
+<div class="stack-section" id="stack">
+  <div class="stack-inner">
+    <div class="reveal">
+      <p class="section-tag">Herramientas</p>
+      <h2 class="section-title" style="color:white">Stack <em style="color:var(--rose-l)">tecnológico</em></h2>
+      <p class="section-sub">Plataformas y herramientas que uso para analizar, visualizar y comunicar datos.</p>
+    </div>
+    <div class="stack-grid reveal">
+      <div class="stack-card"><span class="stack-icon">📉</span><div class="stack-name">GA4</div><div class="stack-cat">Web Analytics</div></div>
+      <div class="stack-card"><span class="stack-icon">📊</span><div class="stack-name">Power BI</div><div class="stack-cat">BI & Dashboards</div></div>
+      <div class="stack-card"><span class="stack-icon">🔍</span><div class="stack-name">Looker Studio</div><div class="stack-cat">BI & Dashboards</div></div>
+      <div class="stack-card"><span class="stack-icon">🗄️</span><div class="stack-name">SQL</div><div class="stack-cat">Data Query</div></div>
+      <div class="stack-card"><span class="stack-icon">📋</span><div class="stack-name">Excel Avanzado</div><div class="stack-cat">Análisis</div></div>
+      <div class="stack-card"><span class="stack-icon">🛒</span><div class="stack-name">VTEX</div><div class="stack-cat">Ecommerce</div></div>
+      <div class="stack-card"><span class="stack-icon">⚙️</span><div class="stack-name">Magento</div><div class="stack-cat">Ecommerce</div></div>
+      <div class="stack-card"><span class="stack-icon">🛍️</span><div class="stack-name">Shopify</div><div class="stack-cat">Ecommerce</div></div>
+      <div class="stack-card"><span class="stack-icon">📣</span><div class="stack-name">Google Ads</div><div class="stack-cat">Performance</div></div>
+      <div class="stack-card"><span class="stack-icon">📱</span><div class="stack-name">Meta Ads</div><div class="stack-cat">Performance</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROJECTS ── -->
+<section class="section" id="projects">
+  <div class="reveal">
+    <p class="section-tag">Portfolio</p>
+    <h2 class="section-title">Proyectos de <em>datos</em></h2>
+    <p class="section-sub">Análisis y visualizaciones que muestran cómo trabajo con datos reales de ecommerce fashion.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-visual" style="background: linear-gradient(135deg, #0E0E0E 0%, #1a1a2e 100%);">
+        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4717A" stop-opacity="0.5"/><stop offset="100%" stop-color="#C4717A" stop-opacity="0"/></linearGradient></defs>
+          <polyline points="20,130 70,105 120,85 170,65 220,50 270,42 320,36 380,30" fill="none" stroke="#C4717A" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="20,130 70,105 120,85 170,65 220,50 270,42 320,36 380,30 380,160 20,160" fill="url(#g1)"/>
+          <circle cx="220" cy="50" r="4" fill="#C4717A"/><circle cx="380" cy="30" r="4" fill="#EDD5D8"/>
+        </svg>
+        <span class="proj-icon">📊</span>
+      </div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Power BI</span><span class="project-tag">SQL</span><span class="project-tag">GA4</span></div>
+        <h3 class="project-name">Dashboard de Conversión Ecommerce</h3>
+        <p class="project-desc">Análisis del funnel completo con segmentación por canal, dispositivo y categoría. Identifica drop-offs y oportunidades de mejora UX.</p>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">5</span><span class="metric-label">KPIs clave</span></div>
+          <div class="metric"><span class="metric-val">5</span><span class="metric-label">Canales</span></div>
+          <div class="metric"><span class="metric-val">Live</span><span class="metric-label">Filtros</span></div>
+        </div>
+        <div class="project-links">
+          <a href="https://castanobelen.github.io/ecommerce-conversion-dashboard" target="_blank" class="project-link primary">Ver demo</a>
+          <a href="https://github.com/castanobelen/ecommerce-conversion-dashboard" target="_blank" class="project-link secondary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-visual" style="background: linear-gradient(135deg, #0F2A2C 0%, #1A4A4E 100%);">
+        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="50" width="40" height="110" rx="4" fill="rgba(42,107,114,0.4)"/>
+          <rect x="90" y="70" width="40" height="90" rx="4" fill="rgba(42,107,114,0.4)"/>
+          <rect x="150" y="35" width="40" height="125" rx="4" fill="#2A6B72" opacity="0.9"/>
+          <rect x="210" y="80" width="40" height="80" rx="4" fill="rgba(42,107,114,0.4)"/>
+          <rect x="270" y="45" width="40" height="115" rx="4" fill="rgba(196,113,122,0.7)"/>
+          <rect x="330" y="65" width="40" height="95" rx="4" fill="rgba(42,107,114,0.4)"/>
+        </svg>
+        <span class="proj-icon">🔮</span>
+      </div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">SQL</span><span class="project-tag">Forecasting</span></div>
+        <h3 class="project-name">Forecasting de Demanda Fashion</h3>
+        <p class="project-desc">Modelo de predicción semanal por categoría incorporando estacionalidad del sector moda y calendario comercial argentino.</p>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">12</span><span class="metric-label">Categorías</span></div>
+          <div class="metric"><span class="metric-val">±8%</span><span class="metric-label">Error prom.</span></div>
+          <div class="metric"><span class="metric-val">Semanal</span><span class="metric-label">Horizonte</span></div>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/castanobelen/fashion-demand-forecasting" target="_blank" class="project-link primary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-visual" style="background: linear-gradient(135deg, #1A0F0F 0%, #2D1515 100%);">
+        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="90" cy="85" r="60" fill="none" stroke="#C4717A" stroke-width="1.5" opacity="0.4"/>
+          <circle cx="90" cy="85" r="42" fill="rgba(196,113,122,0.12)" stroke="#C4717A" stroke-width="1.5"/>
+          <circle cx="90" cy="85" r="22" fill="rgba(196,113,122,0.25)"/>
+          <text x="72" y="90" font-size="10" fill="#C4717A" font-family="monospace">A 20%</text>
+          <rect x="185" y="25" width="185" height="22" rx="4" fill="rgba(196,113,122,0.5)"/>
+          <rect x="185" y="55" width="135" height="22" rx="4" fill="rgba(42,107,114,0.5)"/>
+          <rect x="185" y="85" width="95" height="22" rx="4" fill="rgba(42,107,114,0.3)"/>
+          <rect x="185" y="115" width="60" height="22" rx="4" fill="rgba(42,107,114,0.15)"/>
+          <text x="192" y="40" font-size="9" fill="white" font-family="monospace">Clase A</text>
+          <text x="192" y="70" font-size="9" fill="white" font-family="monospace">Clase B</text>
+          <text x="192" y="100" font-size="9" fill="white" font-family="monospace">Clase C</text>
+          <text x="192" y="130" font-size="9" fill="white" font-family="monospace">Clase D</text>
+        </svg>
+        <span class="proj-icon">📦</span>
+      </div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">SQL</span><span class="project-tag">Excel</span><span class="project-tag">Looker</span></div>
+        <h3 class="project-name">Performance de Catálogo ABC/XYZ</h3>
+        <p class="project-desc">Clasificación de SKUs por rotación y variabilidad de demanda. Detección de canibalización, quiebres de stock y oportunidades de mix.</p>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">3K+</span><span class="metric-label">SKUs</span></div>
+          <div class="metric"><span class="metric-val">4</span><span class="metric-label">Segmentos</span></div>
+          <div class="metric"><span class="metric-val">Real</span><span class="metric-label">Caso</span></div>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/castanobelen/catalogo-abc-xyz" target="_blank" class="project-link primary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-visual" style="background: linear-gradient(135deg, #0A0F1A 0%, #0F1A2E 100%);">
+        <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C4717A" stop-opacity="0.9"/><stop offset="100%" stop-color="#2A6B72" stop-opacity="0.9"/></linearGradient></defs>
+          <rect x="30" y="60" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
+          <rect x="30" y="60" width="215" height="10" rx="5" fill="url(#g2)"/>
+          <rect x="30" y="82" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
+          <rect x="30" y="82" width="155" height="10" rx="5" fill="rgba(42,107,114,0.7)"/>
+          <rect x="30" y="104" width="340" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
+          <rect x="30" y="104" width="285" height="10" rx="5" fill="rgba(42,107,114,0.45)"/>
+          <text x="30" y="52" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Organic</text>
+          <text x="30" y="74" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Paid Social</text>
+          <text x="30" y="96" font-size="9" fill="rgba(255,255,255,0.4)" font-family="monospace">Email</text>
+          <text x="252" y="69" font-size="9" fill="white" font-family="monospace">63%</text>
+          <text x="192" y="91" font-size="9" fill="white" font-family="monospace">45%</text>
+          <text x="322" y="113" font-size="9" fill="white" font-family="monospace">84%</text>
+        </svg>
+        <span class="proj-icon">📡</span>
+      </div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">GA4</span><span class="project-tag">Looker</span><span class="project-tag">SQL</span></div>
+        <h3 class="project-name">Análisis de Atribución Multicanal</h3>
+        <p class="project-desc">Comparación de modelos de atribución (last click vs data-driven) para entender la contribución real de cada canal al revenue.</p>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">5</span><span class="metric-label">Canales</span></div>
+          <div class="metric"><span class="metric-val">3</span><span class="metric-label">Modelos</span></div>
+          <div class="metric"><span class="metric-val">Semanal</span><span class="metric-label">Granularidad</span></div>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/castanobelen/atribucion-multicanal" target="_blank" class="project-link primary">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── EXPERIENCE ── -->
+<div class="exp-section" id="experience">
+  <div class="exp-inner">
+    <div class="reveal">
+      <p class="section-tag">Trayectoria</p>
+      <h2 class="section-title">Experiencia <em>profesional</em></h2>
+    </div>
+    <div class="timeline reveal" style="margin-top: 2.5rem;">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">Feb. 2023 — Presente</p>
+        <h3 class="tl-role">Analista Ecommerce & Comercial</h3>
+        <p class="tl-company">Isadora Argentina — Blue Star Group</p>
+        <ul class="tl-bullets">
+          <li>Monitoreo y análisis del canal digital con <span class="tl-metric">+800K sesiones/mes</span> — elaboración de reportes ejecutivos semanales reducidos de 2h a 30min mediante automatización.</li>
+          <li>Planificación y ejecución de 3 eventos digitales anuales (Hot Sale, Cyber Monday, Glam Days) con resultados de <span class="tl-metric">+200% revenue</span> y CVR duplicado (0,9% → 1,8%).</li>
+          <li>Gestión del customer journey en catálogo de <span class="tl-metric">+3.000 SKUs</span> activos: publicación de productos, activación de promociones y seguimiento del funnel en GA4.</li>
+          <li>Planificación de newsletters y coordinación con CRM para segmentación de audiencias, con foco en retención y CLV.</li>
+          <li>Implementación de estrategias SEO on-page en Magento y optimización de fichas de producto para mejorar conversión orgánica.</li>
+          <li>Seguimiento de métricas clave: CAC, ROAS, CVR, AOV, revenue y margen, con generación de insights para decisiones comerciales.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">Jun. 2021 — Ene. 2023</p>
+        <h3 class="tl-role">Coordinadora de Catálogo Ecommerce</h3>
+        <p class="tl-company">Isadora & Todomoda — Blue Star Group</p>
+        <ul class="tl-bullets">
+          <li>Lideré la estrategia de catálogo digital para 5 mercados de LATAM (AR, CL, MX, PE, BR), gestionando <span class="tl-metric">+6.000 SKUs</span> entre ambas marcas.</li>
+          <li>Gestioné y optimicé fichas de producto en Magento: títulos, meta descriptions, estructura de contenido y enlazado interno, con impacto directo en posicionamiento orgánico.</li>
+          <li>Implementé carga masiva de productos mediante APIs, reduciendo el tiempo de catalogación de días a horas y eliminando errores manuales.</li>
+          <li>Analicé visibilidad orgánica y performance de categorías por mercado, generando reportes para apoyar decisiones de catálogo.</li>
+          <li>Coordiné con equipos técnicos y de performance marketing para alinear el catálogo con campañas pagas y lanzamientos de temporada.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── CONTACT ── -->
+<div class="contact-section" id="contact">
+  <p class="section-tag" style="justify-content:center">Contacto</p>
+  <h2 class="section-title" style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2.2rem,4vw,3.5rem);color:white;text-align:center;margin-bottom:0.5rem;">Hablemos <em style="color:var(--rose-l);font-style:italic">pronto</em></h2>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.88rem;font-weight:300;margin-top:0.5rem;">Abierta a oportunidades en Data Analytics & Business Intelligence</p>
+  <div class="contact-links">
+    <a href="mailto:castanobelen@gmail.com" class="contact-link">✉ castanobelen@gmail.com</a>
+    <a href="https://linkedin.com/in/belencastaño" target="_blank" class="contact-link">💼 LinkedIn</a>
+    <a href="https://github.com/castanobelen" target="_blank" class="contact-link">🐙 GitHub</a>
+  </div>
+</div>
+
+<footer>© 2026 Belén Castaño · Buenos Aires, Argentina</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 4 + 'px';
+  cursor.style.top = my - 4 + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx - 16 + 'px';
+  ring.style.top = ry - 16 + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
